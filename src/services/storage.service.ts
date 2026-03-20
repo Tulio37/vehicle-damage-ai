@@ -46,11 +46,16 @@ export async function saveMediaFile(
   // Copy original
   fs.copyFileSync(tempPath, originalPath);
 
-  // Generate thumbnail
-  await sharp(tempPath)
-    .resize(THUMBNAIL_WIDTH, null, { withoutEnlargement: true })
-    .jpeg({ quality: THUMBNAIL_QUALITY })
-    .toFile(thumbnailPath);
+  // Generate thumbnail (optional — skip if sharp fails)
+  try {
+    await sharp(tempPath)
+      .resize(THUMBNAIL_WIDTH, null, { withoutEnlargement: true })
+      .jpeg({ quality: THUMBNAIL_QUALITY })
+      .toFile(thumbnailPath);
+  } catch (sharpErr) {
+    console.warn('[Storage] Thumbnail skipped (sharp error):', sharpErr);
+    fs.copyFileSync(tempPath, thumbnailPath);
+  }
 
   const stats = fs.statSync(originalPath);
 
