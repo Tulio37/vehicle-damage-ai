@@ -409,3 +409,9 @@ export async function getPendingOperationalReview(limit = 50) {
 export async function getOccurrenceById(occurrenceId: string) {
   return OccurrenceModel.findById(occurrenceId);
 }
+
+export async function getAllOccurrencesAdmin(limit = 100) {
+  return OccurrenceModel.find({})
+    .sort({ createdAt: -1 })
+    .limit(limit);
+}

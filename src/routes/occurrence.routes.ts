@@ -14,6 +14,7 @@ import {
   getOccurrencesByVehicle,
   getPendingOperationalReview,
   getOccurrenceById,
+  getAllOccurrencesAdmin,
 } from '../services/occurrence.service';
 import { AnalysisStatus, HumanReviewRequest } from '../types';
 
@@ -278,6 +279,16 @@ router.get('/vehicle/:vehicleId', async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string || '20', 10);
     const offset = parseInt(req.query.offset as string || '0', 10);
     const occs = await getOccurrencesByVehicle(req.params.vehicleId, limit, offset);
+    return res.status(200).json({ occurrences: occs, totalCount: occs.length });
+  } catch (err) {
+    return res.status(500).json({ error: 'Erro ao buscar ocorrências.' });
+  }
+});
+
+// ─── GET /occurrences/admin/all ───────────────────────────────────────────────
+router.get('/admin/all', async (_req: Request, res: Response) => {
+  try {
+    const occs = await getAllOccurrencesAdmin();
     return res.status(200).json({ occurrences: occs, totalCount: occs.length });
   } catch (err) {
     return res.status(500).json({ error: 'Erro ao buscar ocorrências.' });
